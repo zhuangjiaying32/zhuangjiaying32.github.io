@@ -62,6 +62,25 @@
   <entry>
     <title>注入点判断</title>
     <url>/2023/03/22/%E6%B3%A8%E5%85%A5%E7%82%B9%E5%88%A4%E6%96%AD/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<p><strong>1.注入点判断</strong><br>传入SQL语句可控参数分为两类<span id="more"></span></p>
+<ol>
+<li>数字类型，参数不用被引号括起来，如?id=1</li>
+<li>字符型，参数要被引号扩起来,如?name=”phone”</li>
+</ol>
+<p>判断注入点是否存在</p>
+<p>首先我们需要判断注入点是否存在，如果在页面的url中存在某些参数，比如下面这个URL中就存在一个id参数：<a href="http://xxxxx.xxx/?id=1">http://xxxxx.xxx/?id=1</a></p>
+<p>我们就可以尝试改变id的数值，将参数值+1或-1，然后查看页面展示的内容是否会变化，如果页面会发生变化，则我们就可以初步判断，这个id会带入数据库查询，查询后的内容会显示到页面中来。</p>
+<p>猜测查询的SQL语句大致为：</p>
+<p>select * from [表名] where id = 1;</p>
+<p>一般用于尝试的语句</p>
+<p>Ps:–+可以用#替换，url 提交过程中 Url 编码后的#为%23</p>
+<p>and1=2–+</p>
+<p>‘and1=2–+</p>
+<p>“and1=2–+</p>
+<p>)and1=2–+</p>
+<p>‘)and1=2–+</p>
+<p>“)and1=2–+</p>
+<p>“))and1=2–+</p>
+]]></content>
   </entry>
 </search>
