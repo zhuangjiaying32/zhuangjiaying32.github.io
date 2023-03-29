@@ -81,6 +81,8 @@
 <p>‘)and1=2–+</p>
 <p>“)and1=2–+</p>
 <p>“))and1=2–+</p>
+<p><strong>注入点判断正确时会报错不正确就不会报错</strong></p>
+<p>如语句：”SELECT * FROM users WHERE id=(‘1’) LIMIT 0,1”<br>     输入:’ and1=2–+ 时不报错，闭合符号内为1’and 1=2–+<br>    “SELECT * FROM users WHERE id=(‘1’and 1=2–+’) LIMIT 0,1”<br>    输入: ‘) and 1=2 –+ 时报错，闭合符号内为1,其后接着and 1=2–+<br>     “SELECT * FROM users WHERE id=(‘1’)and 1=2–+’) LIMIT 0,1”</p>
 ]]></content>
   </entry>
 </search>
