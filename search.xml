@@ -89,7 +89,7 @@
     <title>时间盲注</title>
     <url>/2023/03/30/%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8/</url>
     <content><![CDATA[<p><strong>时间盲注</strong></p>
-<p>适用于页面不会返回错误信息，只会回显一种界面。<br>与bool盲注不同的是时间盲注可在不显示报错的页面使用。</p>
+<p>适用于页面不会返回错误信息，只会回显一种界面。<br>与bool盲注不同的是时间盲注可在不显示报错的页面使用。<span id="more"></span></p>
 <p>原理：利用sleep()或benchmark()等函数让mysql执行时间变长经常与if(expr1,expr2,expr3)语句结合使用，通过页面的响应时间来判断条件是否正确。if(expr1,expr2,expr3)含义是如果expr1是True,则返回expr2,否则返回expr3</p>
 <p>简单来说：<strong>利用sleep等函数，制造时间延迟，由回显时间来判断是否报错。</strong></p>
 <p>时间盲注需要几个函数的辅助，就先来了解一下这几个函数</p>
@@ -117,10 +117,10 @@
     <title>bool盲注</title>
     <url>/2023/03/30/bool%E7%9B%B2%E6%B3%A8/</url>
     <content><![CDATA[<p><strong>布尔盲注</strong></p>
-<p>原理：<br>注入的时候只会返回True和False，所以布尔盲注就是根据页面显示的是True还是False进行猜测数据库中的信息。</p>
+<p>原理：<br>注入的时候只会返回True和False，所以布尔盲注就是根据页面显示的是True还是False进行猜测数据库中的信息。<span id="more"></span></p>
 <p>布尔盲注需要几个函数的辅助，就先来了解一下这几个函数</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">length()函数可返回字符串的长度;</span><br><span class="line">substring()函数可以截取字符串，可指定开始的位置和截取的长度;</span><br><span class="line">ord()函数可以返回单个字符的ASCII码;</span><br><span class="line">char()函数可将ASCII码转换为对应的字符;</span><br></pre></td></tr></table></figure>
-<p>布尔盲注常用语句</p>
+<p><strong>布尔盲注常用语句</strong></p>
 <p>爆数据库长度</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1&#x27; and (length(database()))&gt;1 --+;</span><br></pre></td></tr></table></figure>
 <p>1.<br>爆数据库名</p>

